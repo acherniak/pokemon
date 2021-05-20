@@ -1,0 +1,14 @@
+{
+  "name": "kapitus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx http-server"
+  },
+  "author": "Alex Cherniak",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  }
+}
