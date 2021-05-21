@@ -7,8 +7,5 @@
     "start": "npx http-server"
   },
   "author": "Alex Cherniak",
-  "license": "ISC",
-  "dependencies": {
-    "http-server": "^0.12.3"
-  }
+  "license": "ISC"
 }

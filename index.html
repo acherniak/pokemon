@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Pokemon Enthusiast</title>
-<style> div {margin: 10px;} a {float:right;} h2 {text-transform: capitalize;}
-	textarea {width:100%; height: 200px;}
-</style>
-<script> const pokeapi = 'https://pokeapi.co/api/v2/'; var infoEl, pattEl;
-	function init() { infoEl = document.getElementById('info'); pattEl = document.getElementById('name')
-		fetch(pokeapi+'pokemon?limit=100').then(res => res.json())
-		.then(data => { infoEl.innerText = 'Total: '+data.count; 
-			document.getElementById('list').innerHTML = data.results.map(p=>p.name).sort().map(p=>`<option value="${p}"/>`).join(''); 
-		});
-	}
-	function search() { let patt = pattEl.value;
-		if (patt) fetch(`${pokeapi}pokemon/${patt.toLowerCase()}`).then(res => {
-			if (!res.ok) infoEl.innerText = 'Not Found';
-			else res.json().then(data => infoEl.innerHTML = `<h2>${data.name}</h2>Order: <b>${data.order}</b> Weight: <b>${data.weight}</b>
-				<a href="https://bulbapedia.bulbagarden.net/wiki/${data.name}" target="_blank">Wiki</a>`)
-		})
-		else infoEl.innerText = 'Enter the Name';
-	}
-</script>
-</head>
-
-<body onload="init();">
-	<div>
-		<button onClick="search()">Find Pokemon</button> by Name:
-		<input id="name" list="list" autocomplete="off">
-		<button onClick="pattEl.value=''">×</button>
-		<datalist id="list"></datalist>
-		<a href="CX Coding Exercise.pdf" target="_blank">task</a>
-		<div id="info"></div>
-	</div>
-</body>
+	<head>
+		<title>Pokemon Enthusiast</title>
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<style> body,button,input {font-family: sans-serif;}
+			body>div {margin: 10px;} a,small {float:right;}
+			h2 {text-transform: capitalize;} h4 {color:red;}
+			textarea {width:100%; height: 200px;}
+		</style>
+		<script>
+			const pokeapi = 'https://pokeapi.co/api/v2/';
+			let infoEl, pattEl, progrEl,
+				waiting = (load) => progrEl.style.display = load?'inline':'none',
+				init = () => {
+					[infoEl, pattEl, progrEl] = ['info','name','wait'].map(el => document.getElementById(el));
+					fetch(pokeapi+'pokemon?limit=200').then(res => res.json())
+					.then(data => { infoEl.innerHTML = `<h3>Total: ${data.count}</h3><small>200 samples</small>`; waiting(false);
+						document.getElementById('list').innerHTML = data.results.map(p=>p.name).sort().map(p=>`<option value="${p}"/>`).join(''); 
+					});
+				},
+				search = () => { let patt = pattEl.value; 
+					if (!patt) infoEl.innerHTML = '<h4>Enter the Name</h4>';
+					else { waiting(true);
+						fetch(`${pokeapi}pokemon/${patt.toLowerCase()}`).then(res => { waiting(false);
+							if (!res.ok) infoEl.innerHTML = '<h4>Not Found</h4>';
+							else res.json().then(data => infoEl.innerHTML = `<h2>${data.name}</h2>
+								Order: <b>${data.order}</b> Weight: <b>${data.weight}</b>
+								<a href="https://bulbapedia.bulbagarden.net/wiki/${data.name}" target="_blank">Wiki</a>`)
+						})
+					}
+				}
+		</script>
+	</head>
+	<body onload="init();">
+		<div>
+			<button onClick="search()">Find Pokemon</button> by Name:
+			<input id="name" list="list" autocomplete="off">
+			<button onClick="pattEl.value=''">×</button>
+			<datalist id="list"></datalist><progress id="wait"></progress>
+			<a href="CX Coding Exercise.pdf" target="_blank">task</a>
+			<div id="info"></div>
+		</div>
+	</body>
 </html>
